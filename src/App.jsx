@@ -4,14 +4,19 @@ import Dashboard from './pages/Dashboard';
 import PeopleManager from './pages/PeopleManager';
 import ComingSoon from './pages/ComingSoon';
 
-// Simple Layout Component for consistency
 const Layout = ({ children }) => (
   <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-    <nav className="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center">
-      <h1 className="text-xl font-bold text-indigo-700 tracking-wide">IKS Admin Panel</h1>
-      <div className="text-sm text-gray-500">Administrator</div>
+    <nav className="bg-white shadow-sm border-b px-4 md:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-2 sticky top-0 z-40">
+      <h1 className="text-lg md:text-xl font-bold text-indigo-700 tracking-wide text-center sm:text-left">
+        IKS Admin Panel
+      </h1>
+      <div className="text-xs md:text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+        Administrator
+      </div>
     </nav>
-    <main className="p-6 max-w-7xl mx-auto">
+
+    {/* Main Content: Less padding on mobile */}
+    <main className="p-4 md:p-6 max-w-7xl mx-auto">
       {children}
     </main>
   </div>
