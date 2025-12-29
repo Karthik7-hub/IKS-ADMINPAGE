@@ -1,0 +1,20 @@
+/* Standard container for content pages */
+.content-wrapper {
+    background: white;
+    padding: 32px;
+    border-radius: var(--radius);
+    border: 1px dashed var(--border-color);
+    /* Dashed to show it's editable content */
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-gray);
+}
+
+.empty-state-icon {
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
