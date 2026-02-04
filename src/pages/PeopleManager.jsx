@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Plus, Edit2, X, Upload, ArrowLeft, Loader2, Mail, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-const API_BASE = "https://iks-nitrr-backend.vercel.app/person";
+import { peopleService } from '../services/api'; // Import the service we just made
 
 const PeopleManager = () => {
     const navigate = useNavigate();
@@ -29,9 +27,10 @@ const PeopleManager = () => {
 
     const fetchPeople = async () => {
         try {
-            const res = await axios.get(`${API_BASE}/getpeople`);
-            if (res.data.success) {
-                setPeople(res.data.data);
+            // Using Service
+            const data = await peopleService.getAll();
+            if (data.success) {
+                setPeople(data.data);
             }
         } catch (error) {
             console.error("Error fetching people", error);
@@ -72,12 +71,13 @@ const PeopleManager = () => {
         setShowModal(true);
     };
 
-    // --- NEW: DELETE FUNCTIONALITY ---
     const handleDelete = async (id, name) => {
         if (window.confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
             try {
-                await axios.delete(`${API_BASE}/delete/${id}`);
-                // Remove from UI immediately for speed
+                // Using Service
+                await peopleService.delete(id);
+
+                // Optimistic UI Update
                 setPeople(people.filter(person => person._id !== id));
                 alert("Person deleted successfully.");
             } catch (error) {
@@ -102,16 +102,14 @@ const PeopleManager = () => {
 
         try {
             if (isEditing) {
-                await axios.put(`${API_BASE}/update/${formData.id}`, data, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
+                // Using Service
+                await peopleService.update(formData.id, data);
             } else {
-                await axios.post(`${API_BASE}/addperson`, data, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
+                // Using Service
+                await peopleService.create(data);
             }
             setShowModal(false);
-            fetchPeople();
+            fetchPeople(); // Refresh list
         } catch (error) {
             alert("Error saving person. Please try again.");
             console.error(error);
@@ -153,7 +151,7 @@ const PeopleManager = () => {
                                     <div className="w-full h-full flex items-center justify-center text-gray-300">No Image</div>
                                 )}
 
-                                {/* ACTION BUTTONS (Edit & Delete) */}
+                                {/* ACTION BUTTONS */}
                                 <div className="absolute top-2 right-2 flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                     <button
                                         onClick={() => openModal(person)}
@@ -173,7 +171,7 @@ const PeopleManager = () => {
                             </div>
 
                             {/* Info Area */}
-                            <div className="p-4 flex-grow flex flex-col">
+                            <div className="p-4 grow flex flex-col">
                                 <h3 className="font-bold text-gray-800 text-lg leading-tight">{person.name}</h3>
                                 <p className="text-sm text-indigo-600 font-medium mb-3">{person.role}</p>
 
